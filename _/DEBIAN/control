@@ -1,0 +1,10 @@
+Package: com.jake0oo0.overcast
+Name: Overcast
+Depends: 
+Architecture: iphoneos-arm
+Description: An awesome application!
+Maintainer: Jake0oo0
+Author: Jake0oo0
+Section: Utilities
+Version: 0.0.1-51
+Installed-Size: 88
