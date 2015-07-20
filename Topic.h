@@ -4,5 +4,6 @@
 -(id)initJSON:(NSDictionary*)data;
 
 @property (assign) NSString *topicId;
+@property (assign) NSString *title;
 
 @end

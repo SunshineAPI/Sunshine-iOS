@@ -1,6 +1,5 @@
 @interface RootViewController: UITableViewController <UITableViewDataSource, UITableViewDelegate> {
-	UITableView *topicsTableView;
-	NSMutableArray *topicsArray;
-	UILabel *jsonLabel;
 }
+@property (nonatomic, retain) IBOutlet UITableView *topicsTableView;
+@property (nonatomic, retain) NSMutableArray *topicsArray;
 @end

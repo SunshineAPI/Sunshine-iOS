@@ -6,7 +6,8 @@
     self = [super init];
     if(self){
         //NSLog(@"initWithJSONData method called");
-        self.topicId = [data objectForKey:@"title"];;
+        self.topicId = [data objectForKey:@"id"];
+        self.title = [data objectForKey:@"title"];
     }
     return self;
 }
