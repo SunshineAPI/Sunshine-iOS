@@ -1,6 +1,7 @@
 #import "Topic.h"
 @implementation TopicObject
 @synthesize topicId;
+@synthesize title;
 
 -(id)initJSON:(NSDictionary*)data{
     self = [super init];
@@ -10,5 +11,11 @@
         self.title = [data objectForKey:@"title"];
     }
     return self;
+}
+
+- (void)dealloc
+{
+	[super dealloc];
+	NSLog(@"DEACCLOCATED A TOPIC");
 }
 @end

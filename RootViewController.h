@@ -1,5 +1,6 @@
 @interface RootViewController: UITableViewController <UITableViewDataSource, UITableViewDelegate> {
+	UITableView *_topicsTableView;
 }
-@property (nonatomic, retain) IBOutlet UITableView *topicsTableView;
+@property (retain, nonatomic) IBOutlet UITableView *topicsTableView;
 @property (nonatomic, retain) NSMutableArray *topicsArray;
 @end

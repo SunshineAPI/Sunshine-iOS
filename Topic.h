@@ -3,7 +3,7 @@
 
 -(id)initJSON:(NSDictionary*)data;
 
-@property (assign) NSString *topicId;
-@property (assign) NSString *title;
+@property (nonatomic, retain) NSString *topicId;
+@property (nonatomic, retain) NSString *title;
 
 @end

@@ -3,7 +3,7 @@ Name: Overcast
 Depends: 
 Version: 0.0.1
 Architecture: iphoneos-arm
-Description: An awesome application!
+Description: App for Overcast Network forums
 Maintainer: Jake0oo0
 Author: Jake0oo0
 Section: Utilities

@@ -2,22 +2,31 @@
 #import "Topic.m"
 
 @implementation RootViewController
+@synthesize topicsArray;
+@synthesize topicsTableView;
+
 - (void)loadView {
 	self.view = [[[UIView alloc] initWithFrame:[[UIScreen mainScreen] applicationFrame]] autorelease];
 	self.view.backgroundColor = [UIColor whiteColor];
-	self.topicsArray = [[[NSMutableArray alloc] init] retain];
 }
 
 - (void)viewDidLoad {
 	[super viewDidLoad];
+	self.topicsArray = [[NSMutableArray alloc] init];
 
-	self.topicsTableView = [[[UITableView alloc] initWithFrame:self.view.bounds style:UITableViewStylePlain] retain];
+	self.topicsTableView = [[UITableView alloc] initWithFrame:self.view.bounds style:UITableViewStylePlain];
 	self.topicsTableView.dataSource = self;
 	self.topicsTableView.delegate = self;
 
 	[self.view addSubview:self.topicsTableView];
 
 	[self refreshTable];
+	[self.topicsArray retain];
+}
+
+- (void)dealloc {
+	NSLog(@"DEALLOCATING SOMETHINGGG");
+    [super dealloc];
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
@@ -33,32 +42,21 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-	//NSString *CellIdentifier = [NSString stringWithFormat:@"Cell_%d_%d",indexPath.section,indexPath.row];
 	NSString *CellIdentifier = @"Cell";
 
 	UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
 
-	//if (cell == nil) {
-		cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier] autorelease];
-	//}
+	if (cell == nil) {
+		cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
+	}
 
-	NSLog(@"CONFIGUING CELL!!");
 	TopicObject *currentTopic = [self.topicsArray objectAtIndex:indexPath.row];
-	cell.textLabel.text = [currentTopic title];  
+	if (currentTopic == nil) {
+		NSLog(@"IT IS DEFINITELY NIL WTF");
+	}
+	NSString *title = [currentTopic title];
+	cell.textLabel.text = title;  
 	return(cell);
-}
-
--(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
-{
-	// TopicObject *currentTopic = [topicsArray objectAtIndex:indexPath.row];
-	// NSString *topicLink = [NSString stringWithFormat:@"https://oc.tc/forums/topics/%@", [currentTopic topicId]];
-	// NSLog(@"%@", topicLink);
-	// [[UIApplication sharedApplication] openURL:[NSURL URLWithString:topicLink]];
-	// [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"http://www.google.com"]];
-
-	// UIAlertView*topicAlert = [[UIAlertView alloc] initWithTitle:@"Clicked Topic" message:[currentTopic topicId] delegate:self cancelButtonTitle:nil otherButtonTitles:@"OK", nil];
-	// [topicAlert show];
-	// [topicAlert release];
 }
 
 -(void)refreshTable {
@@ -84,7 +82,6 @@
 			for (NSDictionary *eachTopic in dataArray) {
 				TopicObject *topic = [[TopicObject alloc] initJSON:eachTopic];
 				[self.topicsArray addObject:topic];
-				NSLog(@"%@", [topic topicId]);
 			}
 			NSLog(@"ARRA COUNT: %d",[self.topicsArray count]);
 			[self.topicsTableView reloadData];
