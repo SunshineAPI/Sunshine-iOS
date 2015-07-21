@@ -13,9 +13,4 @@
     return self;
 }
 
-- (void)dealloc
-{
-	[super dealloc];
-	NSLog(@"DEACCLOCATED A TOPIC");
-}
 @end

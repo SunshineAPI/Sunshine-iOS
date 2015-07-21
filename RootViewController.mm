@@ -1,9 +1,11 @@
 #import "RootViewController.h"
+#import "TopicViewController.h"
 #import "Topic.m"
 
 @implementation RootViewController
 @synthesize topicsArray;
 @synthesize topicsTableView;
+@synthesize refreshControl;
 
 - (void)loadView {
 	self.view = [[[UIView alloc] initWithFrame:[[UIScreen mainScreen] applicationFrame]] autorelease];
@@ -12,21 +14,29 @@
 
 - (void)viewDidLoad {
 	[super viewDidLoad];
-	self.topicsArray = [[NSMutableArray alloc] init];
+	[self setTitle:@"What's New?"];
+
 
 	self.topicsTableView = [[UITableView alloc] initWithFrame:self.view.bounds style:UITableViewStylePlain];
 	self.topicsTableView.dataSource = self;
 	self.topicsTableView.delegate = self;
 
+	self.refreshControl = [[UIRefreshControl alloc] init];
+    self.refreshControl.tintColor = [UIColor grayColor];
+    [self.refreshControl addTarget:self action:@selector(refreshTable) forControlEvents:UIControlEventValueChanged];
+
 	[self.view addSubview:self.topicsTableView];
+	[self.topicsTableView addSubview:self.refreshControl];
 
 	[self refreshTable];
-	[self.topicsArray retain];
 }
 
-- (void)dealloc {
-	NSLog(@"DEALLOCATING SOMETHINGGG");
-    [super dealloc];
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+      TopicObject *currentTopic = [self.topicsArray objectAtIndex:indexPath.row];
+      TopicViewController *topicController = [TopicViewController alloc];
+      topicController.topic = currentTopic;
+      [self.navigationController pushViewController:topicController animated:YES];
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
@@ -51,15 +61,14 @@
 	}
 
 	TopicObject *currentTopic = [self.topicsArray objectAtIndex:indexPath.row];
-	if (currentTopic == nil) {
-		NSLog(@"IT IS DEFINITELY NIL WTF");
-	}
 	NSString *title = [currentTopic title];
 	cell.textLabel.text = title;  
 	return(cell);
 }
 
 -(void)refreshTable {
+	self.topicsArray = nil;
+	self.topicsArray = [[NSMutableArray alloc] init];
 	NSURLRequest *urlRequest = [NSURLRequest requestWithURL:[NSURL URLWithString:@"https://agile-tor-8712.herokuapp.com/forums/new"]];
 	NSURLResponse *response = nil;
 	NSError *error = nil;
@@ -83,8 +92,8 @@
 				TopicObject *topic = [[TopicObject alloc] initJSON:eachTopic];
 				[self.topicsArray addObject:topic];
 			}
-			NSLog(@"ARRA COUNT: %d",[self.topicsArray count]);
 			[self.topicsTableView reloadData];
+			[self.refreshControl endRefreshing];
 		} else {
 
 		}

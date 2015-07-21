@@ -3,6 +3,7 @@
 @interface OvercastApplication: UIApplication <UIApplicationDelegate> {
 	UIWindow *_window;
 	RootViewController *_viewController;
+	UINavigationController *navigation;
 }
 @property (nonatomic, retain) UIWindow *window;
 @end
@@ -12,7 +13,9 @@
 - (void)applicationDidFinishLaunching:(UIApplication *)application {
 	_window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
 	_viewController = [[RootViewController alloc] init];
-	[_window addSubview:_viewController.view];
+	navigation = [[UINavigationController alloc] initWithRootViewController:_viewController];
+	_window.rootViewController = navigation;
+	// [_window addSubview:_viewController.view];
 	[_window makeKeyAndVisible];
 }
 
