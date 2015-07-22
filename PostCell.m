@@ -4,15 +4,18 @@
 @implementation PostCell
 @synthesize contentLabel,avatarImage;
 
-- (id)initWithFrame:(CGRect)frame reuseIdentifier:(NSString *)reuseIdentifier {
+- (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier {
 
-    if (self = [super initWithFrame:frame reuseIdentifier:reuseIdentifier]) {
+    if (self = [super initWithStyle:style reuseIdentifier:reuseIdentifier]) {
+        NSLog(@"Initialized custom cell!!!");
 
         contentLabel = [[UILabel alloc]init];
 
         contentLabel.textAlignment = UITextAlignmentLeft;
 
         contentLabel.font = [UIFont systemFontOfSize:17];
+        contentLabel.numberOfLines = 0;
+        contentLabel.lineBreakMode = UILineBreakModeWordWrap;
 
         avatarImage = [[UIImageView alloc]init];
 
@@ -33,14 +36,16 @@
     CGRect contentRect = self.contentView.bounds;
 
     CGFloat boundsX = contentRect.origin.x;
+    float width = contentRect.size.width;
+    float height = contentRect.size.height; 
 
     CGRect frame;
 
-    frame= CGRectMake(boundsX+10 ,0, 300, 40);
+    frame= CGRectMake(boundsX+10, 5, 16, 16);
 
     avatarImage.frame = frame;
 
-    frame= CGRectMake(boundsX+70 ,5, 200, 25);
+    frame= CGRectMake(boundsX + 10, 20, width - 38, height);
 
     contentLabel.frame = frame;
 

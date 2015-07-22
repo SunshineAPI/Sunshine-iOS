@@ -43,17 +43,15 @@
 		cell = [[PostCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
 	}
 
-	cell.contentLabel.numberOfLines = 0;
-	cell.contentLabel.lineBreakMode = UILineBreakModeWordWrap;
-
 	PostObject *currentPost = [self.postsArray objectAtIndex:indexPath.row];
 	NSString *text = [currentPost text];
-
+	NSString *author = [currentPost author];
 	NSError *error;
 	NSAttributedString *formatted = [[NSAttributedString alloc] initWithData:[text dataUsingEncoding:NSUTF8StringEncoding] options:@{NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType} documentAttributes:nil error:&error];
 	
 	cell.contentLabel.attributedText = formatted;
-	cell.avatarImage.image = [UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:@"https://crafatar.com/avatars/Jake_0?size=16"]]];
+	NSString *crafatar = [NSString stringWithFormat:@"https://crafatar.com/avatars/%@?size=16", author];
+	cell.avatarImage.image = [UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:crafatar]]];
 	return(cell);
 }
 
@@ -66,7 +64,7 @@
 	NSAttributedString *formatted = [[NSAttributedString alloc] initWithData:[text dataUsingEncoding:NSUTF8StringEncoding] options:@{NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType} documentAttributes:nil error:&error];
 	CGFloat height = [formatted boundingRectWithSize:CGSizeMake(self.topicTableView.frame.size.width, CGFLOAT_MAX) options:(NSStringDrawingUsesLineFragmentOrigin|NSStringDrawingUsesFontLeading) context:nil].size.height;
 
-	return height;
+	return height + 21;
 }
 
 -(void)refreshTable {
