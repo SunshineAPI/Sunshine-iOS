@@ -2,7 +2,7 @@
 
 
 @implementation PostCell
-@synthesize contentLabel,avatarImage;
+@synthesize contentLabel,avatarImage,authorLabel;
 
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier {
 
@@ -10,7 +10,8 @@
         NSLog(@"Initialized custom cell!!!");
 
         contentLabel = [[UILabel alloc]init];
-
+        authorLabel = [[UILabel alloc]init];
+        authorLabel.font = [UIFont systemFontOfSize:18];
         contentLabel.textAlignment = UITextAlignmentLeft;
 
         contentLabel.font = [UIFont systemFontOfSize:17];
@@ -20,7 +21,7 @@
         avatarImage = [[UIImageView alloc]init];
 
         [self.contentView addSubview:contentLabel];
-
+        [self.contentView addSubview:authorLabel];
         [self.contentView addSubview:avatarImage];
 
     }
@@ -45,7 +46,11 @@
 
     avatarImage.frame = frame;
 
-    frame= CGRectMake(boundsX + 10, 20, width - 38, height);
+    frame= CGRectMake(boundsX+38, 5, width - 10, 16);
+
+    authorLabel.frame = frame;
+
+    frame= CGRectMake(boundsX + 10, 20, width - 10, height + 20);
 
     contentLabel.frame = frame;
 
@@ -56,6 +61,7 @@
 {
     [avatarImage release];
     [contentLabel release];
+    [authorLabel release];
     [super dealloc];
 }
 @end

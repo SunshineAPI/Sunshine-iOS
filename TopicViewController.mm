@@ -50,6 +50,7 @@
 	NSAttributedString *formatted = [[NSAttributedString alloc] initWithData:[text dataUsingEncoding:NSUTF8StringEncoding] options:@{NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType} documentAttributes:nil error:&error];
 	
 	cell.contentLabel.attributedText = formatted;
+	cell.authorLabel.text = author;
 	NSString *crafatar = [NSString stringWithFormat:@"https://crafatar.com/avatars/%@?size=16", author];
 	cell.avatarImage.image = [UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:crafatar]]];
 	return(cell);
@@ -62,9 +63,9 @@
 	NSString *text = [currentPost text];
 	NSError *error;
 	NSAttributedString *formatted = [[NSAttributedString alloc] initWithData:[text dataUsingEncoding:NSUTF8StringEncoding] options:@{NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType} documentAttributes:nil error:&error];
-	CGFloat height = [formatted boundingRectWithSize:CGSizeMake(self.topicTableView.frame.size.width, CGFLOAT_MAX) options:(NSStringDrawingUsesLineFragmentOrigin|NSStringDrawingUsesFontLeading) context:nil].size.height;
+	CGFloat height = [formatted boundingRectWithSize:CGSizeMake(self.topicTableView.frame.size.width - 10, CGFLOAT_MAX) options:(NSStringDrawingUsesLineFragmentOrigin|NSStringDrawingUsesFontLeading) context:nil].size.height;
 
-	return height + 21;
+	return height + 25;
 }
 
 -(void)refreshTable {

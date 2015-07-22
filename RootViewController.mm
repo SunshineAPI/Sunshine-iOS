@@ -6,6 +6,7 @@
 @synthesize topicsArray;
 @synthesize topicsTableView;
 @synthesize refreshControl;
+@synthesize page;
 
 - (void)loadView {
 	self.view = [[[UIView alloc] initWithFrame:[[UIScreen mainScreen] applicationFrame]] autorelease];
@@ -23,6 +24,7 @@
 
 	self.refreshControl = [[UIRefreshControl alloc] init];
     self.refreshControl.tintColor = [UIColor grayColor];
+    self.page = 1;
     [self.refreshControl addTarget:self action:@selector(refreshTable) forControlEvents:UIControlEventValueChanged];
 
 	[self.view addSubview:self.topicsTableView];
@@ -62,14 +64,30 @@
 
 	TopicObject *currentTopic = [self.topicsArray objectAtIndex:indexPath.row];
 	NSString *title = [currentTopic title];
-	cell.textLabel.text = title;  
+	NSString *author = [currentTopic author];
+	cell.textLabel.text = title;
+	NSString *crafatar = [NSString stringWithFormat:@"https://crafatar.com/avatars/%@?size=32", author];  
+	cell.imageView.image = [UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:crafatar]]];
 	return(cell);
 }
 
+- (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate {    
+    NSInteger currentOffset = scrollView.contentOffset.y;
+    NSInteger maximumOffset = scrollView.contentSize.height - scrollView.frame.size.height;
+
+    if (maximumOffset - currentOffset <= -40) {
+    	self.page += 1;
+        [self refreshTable];
+    }
+}
+
 -(void)refreshTable {
-	self.topicsArray = nil;
-	self.topicsArray = [[NSMutableArray alloc] init];
-	NSURLRequest *urlRequest = [NSURLRequest requestWithURL:[NSURL URLWithString:@"https://agile-tor-8712.herokuapp.com/forums/new"]];
+	if (self.page == 1 or self.refreshControl.isRefreshing) {
+		self.topicsArray = nil;
+		self.topicsArray = [[NSMutableArray alloc] init];
+	}
+	NSString *apiCall = [NSString stringWithFormat:@"https://agile-tor-8712.herokuapp.com/forums/new?page=%d", self.page];
+	NSURLRequest *urlRequest = [NSURLRequest requestWithURL:[NSURL URLWithString:apiCall]];
 	NSURLResponse *response = nil;
 	NSError *error = nil;
 	NSData *data = [NSURLConnection sendSynchronousRequest:urlRequest
