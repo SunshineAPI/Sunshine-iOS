@@ -51,8 +51,22 @@
 	
 	cell.contentLabel.attributedText = formatted;
 	cell.authorLabel.text = author;
-	NSString *crafatar = [NSString stringWithFormat:@"https://crafatar.com/avatars/%@?size=16", author];
-	cell.avatarImage.image = [UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:crafatar]]];
+	//cell.avatarImage.image = [UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:crafatar]]];
+	
+	dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+		NSString *crafatar = [NSString stringWithFormat:@"https://crafatar.com/avatars/%@?size=16", author];
+        NSData *imgData = [NSData dataWithContentsOfURL:[NSURL URLWithString:crafatar]];
+        if (imgData) {
+            UIImage *image = [UIImage imageWithData:imgData];
+            if (image) {
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    PostCell *updateCell = (id)[tableView cellForRowAtIndexPath:indexPath];
+                    if (updateCell)
+                        updateCell.avatarImage.image = image;
+                });
+            }
+        }
+    });
 	return(cell);
 }
 
