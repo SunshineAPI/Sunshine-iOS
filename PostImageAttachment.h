@@ -1,0 +1,2 @@
+@interface PostImageAttachment : NSTextAttachment 
+@end

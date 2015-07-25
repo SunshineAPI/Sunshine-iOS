@@ -7,6 +7,7 @@
 @synthesize topicsTableView;
 @synthesize refreshControl;
 @synthesize page;
+@synthesize cachedAvatars;
 
 - (void)loadView {
 	self.view = [[[UIView alloc] initWithFrame:[[UIScreen mainScreen] applicationFrame]] autorelease];
@@ -17,7 +18,7 @@
 	[super viewDidLoad];
 	[self setTitle:@"What's New?"];
 
-
+	self.cachedAvatars = [[NSMutableDictionary alloc] init];
 	self.topicsTableView = [[UITableView alloc] initWithFrame:self.view.bounds style:UITableViewStylePlain];
 	self.topicsTableView.dataSource = self;
 	self.topicsTableView.delegate = self;
@@ -66,8 +67,40 @@
 	NSString *title = [currentTopic title];
 	NSString *author = [currentTopic author];
 	cell.textLabel.text = title;
-	NSString *crafatar = [NSString stringWithFormat:@"https://crafatar.com/avatars/%@?size=32", author];  
-	cell.imageView.image = [UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:crafatar]]];
+	
+
+	NSString *identifier = [NSString stringWithFormat:@"Cell%@", author];
+
+	if ([self.cachedAvatars objectForKey:identifier] != nil) {
+		cell.imageView.image = [self.cachedAvatars valueForKey:identifier];
+	} else {
+
+		char const * s = [identifier  UTF8String];
+
+		dispatch_queue_t queue = dispatch_queue_create(s, 0);
+
+		dispatch_async(queue, ^{
+
+			NSString *crafatar = [NSString stringWithFormat:@"https://crafatar.com/avatars/%@?size=32&helm", author];
+
+			UIImage *img = nil;
+
+			NSData *imgData = [NSData dataWithContentsOfURL:[NSURL URLWithString:crafatar]];
+
+			img = [[UIImage alloc] initWithData:imgData];
+
+			dispatch_async(dispatch_get_main_queue(), ^{
+
+				if ([tableView indexPathForCell:cell].row == indexPath.row) {
+
+					[self.cachedAvatars setValue:img forKey:identifier];
+
+					cell.imageView.image = [self.cachedAvatars valueForKey:identifier];
+				}
+			});
+		});
+	}
+
 	return(cell);
 }
 
