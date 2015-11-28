@@ -1,9 +1,8 @@
-Package: com.jake0oo0.overcast
-Name: Overcast
-Depends: 
-Version: 0.0.1
+Package: com.sunshine-api.com
+Name: Sunshine
+Version: 0.1.0
 Architecture: iphoneos-arm
 Description: App for Overcast Network forums
-Maintainer: Jake0oo0
-Author: Jake0oo0
+Maintainer: Jake0oo0 <jake0oo0dev@gmail.com>
+Author: Jake0oo0 <jake0oo0dev@gmail.com>
 Section: Applications

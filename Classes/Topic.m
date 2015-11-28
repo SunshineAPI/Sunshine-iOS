@@ -1,7 +1,7 @@
 #import "Topic.h"
 
 @implementation TopicObject
-@synthesize topicId, title, author;
+@synthesize topicId, title, author, pageCount;
 
 -(id)initJSON:(NSDictionary*)data {
   self = [super init];

@@ -6,16 +6,16 @@ ADDITIONAL_OBJCFLAGS = -fobjc-arc
 
 include theos/makefiles/common.mk
 
-APPLICATION_NAME = Overcast
-Overcast_FILES = main.m $(wildcard Classes/**/*.m) $(wildcard Classes/*.m) $(wildcard Classes/*.mm)
-Overcast_FRAMEWORKS = UIKit CoreGraphics Foundation SystemConfiguration Security MobileCoreServices
-Overcast_PRIVATE_FRAMEWORKS = ChatKit
-Overcast_LDFLAGS = -all_load -ObjC
-Overcast_LDFLAGS += -Wl,-segalign,4000
+APPLICATION_NAME = Sunshine
+Sunshine_FILES = main.m $(wildcard Classes/**/*.m) $(wildcard Classes/*.m) $(wildcard Classes/*.mm)
+Sunshine_FRAMEWORKS = UIKit CoreGraphics Foundation SystemConfiguration Security MobileCoreServices
+Sunshine_PRIVATE_FRAMEWORKS = ChatKit
+Sunshine_LDFLAGS = -all_load -ObjC
+Sunshine_LDFLAGS += -Wl,-segalign,4000
 
 
 include $(THEOS_MAKE_PATH)/application.mk
 
 after-install::
-	install.exec "killall -9 Overcast"
+	install.exec "killall -9 Sunshine"
 include $(THEOS_MAKE_PATH)/aggregate.mk

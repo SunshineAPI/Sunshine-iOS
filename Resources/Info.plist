@@ -3,13 +3,13 @@
 <plist version="1.0">
 <dict>
     <key>CFBundleDisplayName</key>
-    <string>Overcast</string>
+    <string>Sunshine</string>
     <key>CFBundleDevelopmentRegion</key>
     <string>en</string>
     <key>CFBundleExecutable</key>
-    <string>Overcast</string>
+    <string>Sunshine</string>
     <key>CFBundleIdentifier</key>
-    <string>com.jake0oo0.overcast</string>
+    <string>com.sunshine-api.sunshine-client</string>
     <key>CFBundleInfoDictionaryVersion</key>
     <string>6.0</string>
     <key>CFBundlePackageType</key>
@@ -29,11 +29,12 @@
     <array>
         <dict>
             <key>CFBundleURLName</key>
-            <string>com.jake0oo0.overcast</string>
+            <string>com.sunshine-api.sunshine-client</string>
             <key>CFBundleURLSchemes</key>
             <array>
-                <string>overcast</string>
+                <string>sunshine</string>
                 <string>octc</string>
+                <string>overcast</string>
             </array>
         </dict>
     </array>

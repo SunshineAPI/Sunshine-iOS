@@ -1,7 +1,7 @@
 #import "ForumsViewController.h"
 #import "ProfileViewController.h"
 
-@interface OvercastApplication : UIApplication <UIApplicationDelegate> {
+@interface SunshineApplication : UIApplication <UIApplicationDelegate> {
 	UIWindow *_window;
 	UITabBarController *_tabBarController;
 }
@@ -9,7 +9,7 @@
 @property (nonatomic, retain) UITabBarController *tabBarController;
 @end
 
-@implementation OvercastApplication
+@implementation SunshineApplication
 @synthesize window, tabBarController;
 
 - (void)applicationDidFinishLaunching:(UIApplication *)application {
