@@ -6,8 +6,7 @@
 
   float scalingFactor = 1.0;   
   CGSize imageSize = [self.image size];   
-  if (width < imageSize.width)
-      scalingFactor = width / imageSize.width;
+  if (width < imageSize.width) scalingFactor = width / imageSize.width;
   CGRect rect = CGRectMake(0, 0, imageSize.width * scalingFactor, imageSize.height * scalingFactor);
 
   return rect;

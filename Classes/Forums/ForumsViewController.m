@@ -9,19 +9,27 @@
 @implementation ForumsViewController
 @synthesize topicsArray, topicsTableView, refreshControl, page, category;
 
+- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
+  self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
+  if (self) {
+    self.title = @"Forums";
+  }
+  return self;
+}
+
 - (void)viewDidLoad {
   self.view = [[UIView alloc] initWithFrame: [[UIScreen mainScreen] applicationFrame]];
   self.view.backgroundColor = [UIColor whiteColor];
 
 	[super viewDidLoad];
-	self.title = @"What's New?";
+	self.navigationItem.title = @"What's New?";
 
 	self.topicsTableView = [[UITableView alloc] initWithFrame:self.view.bounds style:UITableViewStylePlain];
 	self.topicsTableView.dataSource = self;
 	self.topicsTableView.delegate = self;
 
 	self.refreshControl = [[UIRefreshControl alloc] init];
-  self.refreshControl.tintColor = [UIColor grayColor];
+  self.refreshControl.tintColor = [UIColor lightGrayColor];
   self.page = 1;
   [self.refreshControl addTarget:self action:@selector(refreshTable) forControlEvents:UIControlEventValueChanged];
 
@@ -65,7 +73,7 @@
 
 -(void)didSelectCategory:(NSString*)categoryId withName:(NSString*)categoryName {
   if (categoryId && categoryName) {
-    self.title = categoryName;
+    self.navigationItem.title = categoryName;
     self.category = categoryId;
 
     self.page = 1;

@@ -4,13 +4,19 @@
 @implementation ProfileViewController
 @synthesize profileView, searchController;
 
+- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
+  self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
+  if (self) {
+    self.title = @"Profiles";
+  }
+  return self;
+}
+
 - (void)viewDidLoad {
   self.view = [[UIView alloc] initWithFrame: [[UIScreen mainScreen] applicationFrame]];
   self.view.backgroundColor = [UIColor whiteColor];
   self.edgesForExtendedLayout = UIRectEdgeNone; 
   [super viewDidLoad];
-  self.title = @"Profile Lookup";
-
 
   self.searchController = [[UISearchController alloc] initWithSearchResultsController:nil];
   self.searchController.dimsBackgroundDuringPresentation = NO;
@@ -21,7 +27,7 @@
   [self.searchController.searchBar sizeToFit];
 
   self.profileView = [[UIWebView alloc] initWithFrame:self.view.bounds];
-   CGRect frame = profileView.frame;
+  CGRect frame = profileView.frame;
   profileView.frame = CGRectMake(frame.origin.x, self.searchController.searchBar.frame.size.height, frame.size.width, frame.size.height);
   self.profileView.scalesPageToFit = YES;
   self.profileView.delegate = self;

@@ -9,7 +9,7 @@
 static NSString *CellIdentifier = @"Cell";
 
 @implementation TopicViewController 
-@synthesize postsArray, topicTableView;
+@synthesize postsArray, topicTableView, refreshControl;
 
 - (void) viewDidLoad {
 	self.view = [[UIView alloc] initWithFrame:[[UIScreen mainScreen] applicationFrame]];
@@ -20,12 +20,18 @@ static NSString *CellIdentifier = @"Cell";
 	self.topicTableView.dataSource = self;
 	self.topicTableView.delegate = self;
 
-  self.topicTableView.estimatedRowHeight = 300;
+  self.topicTableView.estimatedRowHeight = 50;
   self.topicTableView.rowHeight = UITableViewAutomaticDimension;
   self.topicTableView.allowsSelection = NO;
   [self.topicTableView registerClass:[PostCell class] forCellReuseIdentifier:CellIdentifier];
 
+  self.refreshControl = [[UIRefreshControl alloc] init];
+  self.refreshControl.tintColor = [UIColor lightGrayColor];
+  self.page = 1;
+  [self.refreshControl addTarget:self action:@selector(refreshTable) forControlEvents:UIControlEventValueChanged];
+
 	[self.view addSubview:self.topicTableView];
+  [self.topicTableView addSubview:self.refreshControl];
 
 	self.page = 1;
 	[self refreshTable];
@@ -107,10 +113,13 @@ static NSString *CellIdentifier = @"Cell";
 - (void)refreshTable {
 	NSString *apiCall = [NSString stringWithFormat:@"https://sunshine-api.com/forums/topics/%@?page=%d", [self.topic topicId], (int) self.page];
 
-  if (self.page == 1) {
+  if (self.page == 1 || self.refreshControl.isRefreshing) {
    self.postsArray = nil;
    self.postsArray = [[NSMutableArray alloc] init];
   }
+
+  [self.refreshControl beginRefreshing];
+  [self.topicTableView reloadData];
 
   AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
   manager.requestSerializer = [AFJSONRequestSerializer serializer];
@@ -125,6 +134,7 @@ static NSString *CellIdentifier = @"Cell";
 
       dispatch_async(dispatch_get_main_queue(), ^{
         [self.topicTableView reloadData];
+        [self.refreshControl endRefreshing];
       });
     }
     failure:nil];
