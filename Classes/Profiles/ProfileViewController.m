@@ -1,4 +1,4 @@
-#import "AFNetworking/AFNetworking.h"
+#import "../AFNetworking/AFNetworking.h"
 #import "ProfileViewController.h"
 
 @implementation ProfileViewController

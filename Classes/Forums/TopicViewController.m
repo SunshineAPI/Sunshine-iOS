@@ -2,9 +2,9 @@
 #import "Post.h"
 #import "PostCell.h"
 #import "PostImageAttachment.h"
-#import "AFNetworking/AFNetworking.h"
-#import "UIKit+AFNetworking/UIImageView+AFNetworking.h"
-#import "OvercastWebViewController.h"
+#import "../AFNetworking/AFNetworking.h"
+#import "../UIKit+AFNetworking/UIImageView+AFNetworking.h"
+#import "../OvercastWebViewController.h"
 
 static NSString *CellIdentifier = @"Cell";
 

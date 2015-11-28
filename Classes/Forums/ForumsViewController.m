@@ -1,8 +1,8 @@
 #import "ForumsViewController.h"
 #import "TopicViewController.h"
 #import "Topic.h"
-#import "AFNetworking/AFNetworking.h"
-#import "UIKit+AFNetworking/UIImageView+AFNetworking.h"
+#import "../AFNetworking/AFNetworking.h"
+#import "../UIKit+AFNetworking/UIImageView+AFNetworking.h"
 #import "ForumsHelper.h"
 #import "CategoriesViewController.h"
 

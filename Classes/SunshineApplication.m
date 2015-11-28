@@ -1,10 +1,11 @@
-#import "ForumsViewController.h"
-#import "ProfileViewController.h"
+#import "Forums/ForumsViewController.h"
+#import "Profiles/ProfileViewController.h"
 
 @interface SunshineApplication : UIApplication <UIApplicationDelegate> {
 	UIWindow *_window;
 	UITabBarController *_tabBarController;
 }
+
 @property (nonatomic, retain) UIWindow *window;
 @property (nonatomic, retain) UITabBarController *tabBarController;
 @end

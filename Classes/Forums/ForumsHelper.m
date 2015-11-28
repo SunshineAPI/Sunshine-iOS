@@ -1,5 +1,5 @@
 #import "ForumsHelper.h"
-#import "AFNetworking/AFNetworking.h"
+#import "../AFNetworking/AFNetworking.h"
 
 @implementation ForumsHelper
 + (void)getCategories:(void (^)(NSArray *categories))categoriesSuccess {
