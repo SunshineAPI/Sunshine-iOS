@@ -20,13 +20,11 @@
     self.bodyView = [UITextView newAutoLayoutView];
     self.bodyView.textContainer.lineFragmentPadding = 0;
     self.bodyView.textContainerInset = UIEdgeInsetsZero;
-    // [self.bodyView sizeToFit];
 
+    [self.contentView addSubview:self.bodyView];
 
     [self.contentView addSubview:self.authorLabel];
-    [self.contentView addSubview:self.avatarView];
-    [self.contentView addSubview:self.bodyView];
-      
+    [self.contentView addSubview:self.avatarView];      
   }
   
   return self;
@@ -41,7 +39,6 @@
 
     [self.avatarView autoPinEdgeToSuperviewEdge:ALEdgeTop withInset:kLabelVerticalInsets];
     [self.avatarView autoPinEdgeToSuperviewEdge:ALEdgeLeading withInset:kLabelHorizontalInsets];
-    // [self.avatarView autoPinEdgeToSuperviewEdge:ALEdgeTrailing withInset:kLabelHorizontalInsets];
 
     // setup author
     // 
@@ -51,8 +48,8 @@
     }];
 
     [self.authorLabel autoPinEdgeToSuperviewEdge:ALEdgeTop withInset:kLabelVerticalInsets];
-    // [self.authorLabel autoPinEdgeToSuperviewEdge:ALEdgeLeading withInset:kLabelHorizontalInsets];
-    // [self.authorLabel autoPinEdgeToSuperviewEdge:ALEdgeTrailing withInset:kLabelHorizontalInsets];
+
+    // setup body
 
     [self.bodyView autoPinEdge:ALEdgeTop toEdge:ALEdgeBottom ofView:self.avatarView withOffset:kLabelVerticalInsets];
     [NSLayoutConstraint autoSetPriority:UILayoutPriorityRequired forConstraints:^{

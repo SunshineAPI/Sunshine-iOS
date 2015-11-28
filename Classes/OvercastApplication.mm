@@ -1,4 +1,5 @@
 #import "ForumsViewController.h"
+#import "ProfileViewController.h"
 
 @interface OvercastApplication : UIApplication <UIApplicationDelegate> {
 	UIWindow *_window;
@@ -15,13 +16,14 @@
 	self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
 	self.tabBarController = [[UITabBarController alloc] init];
 
-
 	ForumsViewController *forumsController = [[ForumsViewController alloc] init];
 	UINavigationController *forumsNav = [[UINavigationController alloc] initWithRootViewController:forumsController];
 	// forumsNav.tabBarItem.image = [UIImage imageNamed:@"TabForums.png"];
 
+	ProfileViewController *profileController = [[ProfileViewController alloc] init];
+	UINavigationController *profileNav = [[UINavigationController alloc] initWithRootViewController:profileController];
 
-	NSArray *controllers = [NSArray arrayWithObjects:forumsNav, nil];
+	NSArray *controllers = [NSArray arrayWithObjects:forumsNav, profileNav, nil];
 	self.tabBarController.viewControllers = controllers;
 
 	self.window.backgroundColor = [UIColor whiteColor];

@@ -1,6 +1,6 @@
 #import "Topic.h"
 
-@interface TopicViewController: UITableViewController <UITableViewDataSource, UITableViewDelegate> {
+@interface TopicViewController: UITableViewController <UITableViewDataSource, UITableViewDelegate, UITextViewDelegate, UIWebViewDelegate> {
 	UITableView *_topicTableView;
 }
 

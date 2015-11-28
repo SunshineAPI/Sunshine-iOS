@@ -3,9 +3,11 @@
 #import "Topic.h"
 #import "AFNetworking/AFNetworking.h"
 #import "UIKit+AFNetworking/UIImageView+AFNetworking.h"
+#import "ForumsHelper.h"
+#import "CategoriesViewController.h"
 
 @implementation ForumsViewController
-@synthesize topicsArray, topicsTableView, refreshControl, page, cachedAvatars;
+@synthesize topicsArray, topicsTableView, refreshControl, page, category;
 
 - (void)viewDidLoad {
   self.view = [[UIView alloc] initWithFrame: [[UIScreen mainScreen] applicationFrame]];
@@ -14,7 +16,6 @@
 	[super viewDidLoad];
 	self.title = @"What's New?";
 
-	self.cachedAvatars = [[NSMutableDictionary alloc] init];
 	self.topicsTableView = [[UITableView alloc] initWithFrame:self.view.bounds style:UITableViewStylePlain];
 	self.topicsTableView.dataSource = self;
 	self.topicsTableView.delegate = self;
@@ -27,14 +28,59 @@
 	[self.view addSubview:self.topicsTableView];
 	[self.topicsTableView addSubview:self.refreshControl];
 
+  UIBarButtonItem *categoriesButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemOrganize
+    target:self
+    action:@selector(openCategories:)];
+  self.navigationItem.leftBarButtonItem = categoriesButton;
+
+
+  NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+
+  if ([defaults objectForKey:@"forums_categories"]) {
+    self.categories = [defaults objectForKey:@"forums_categories"];
+  } else {
+    [ForumsHelper getCategories:^void (NSArray *results) {
+      NSMutableArray *temp = [results mutableCopy];
+      [temp removeObjectAtIndex:0];
+
+      self.categories = [temp copy];
+
+      [defaults setObject:self.categories forKey:@"forums_categories"];
+      [defaults synchronize];
+    }];
+  }
+
+
 	[self refreshTable];
 }
 
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+-(void)openCategories:(id)sender {
+  CategoriesViewController *categorySelection = [[CategoriesViewController alloc] init];
+  categorySelection.categories = self.categories;
+
+  categorySelection.delegate = self;
+
+  [self.navigationController pushViewController:categorySelection animated:YES];
+}
+
+-(void)didSelectCategory:(NSString*)categoryId withName:(NSString*)categoryName {
+  if (categoryId && categoryName) {
+    self.title = categoryName;
+    self.category = categoryId;
+
+    self.page = 1;
+
+    [self refreshTable];
+  }
+}
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath*)indexPath {
   [tableView deselectRowAtIndexPath:indexPath animated:YES];
+
   TopicObject *currentTopic = [self.topicsArray objectAtIndex:indexPath.row];
   TopicViewController *topicController = [TopicViewController alloc];
   topicController.topic = currentTopic;
+  
   [self.navigationController pushViewController:topicController animated:YES];
 }
 
@@ -47,7 +93,7 @@
 	return 1;
 }
 
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath*)indexPath {
 	NSString *CellIdentifier = @"Cell";
 
 	UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
@@ -87,13 +133,20 @@
 }
 
 -(void)refreshTable {
-  NSString *apiCall = [NSString stringWithFormat:@"https://sunshine-api.com/forums/new?page=%d", (int) self.page];
+  NSString *apiCall;
+  if (self.category) {
+    apiCall = [NSString stringWithFormat:@"https://sunshine-api.com/forums/%@?page=%d", self.category, (int) self.page];
+  } else {
+    apiCall = [NSString stringWithFormat:@"https://sunshine-api.com/forums/new?page=%d", (int) self.page];
+  }
 
   if (self.page == 1 || self.refreshControl.isRefreshing) {
    self.topicsArray = nil;
    self.topicsArray = [[NSMutableArray alloc] init];
   }
 
+  [self.refreshControl beginRefreshing];
+  [self.topicsTableView reloadData];
   AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
   manager.requestSerializer = [AFJSONRequestSerializer serializer];
   [manager GET:apiCall

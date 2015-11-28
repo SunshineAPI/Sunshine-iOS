@@ -4,6 +4,7 @@
 #import "PostImageAttachment.h"
 #import "AFNetworking/AFNetworking.h"
 #import "UIKit+AFNetworking/UIImageView+AFNetworking.h"
+#import "OvercastWebViewController.h"
 
 static NSString *CellIdentifier = @"Cell";
 
@@ -66,14 +67,8 @@ static NSString *CellIdentifier = @"Cell";
   cell.bodyView.scrollEnabled = NO;
   cell.bodyView.editable = NO;
 	cell.bodyView.attributedText = formatted;
+  cell.bodyView.delegate = self;
 	cell.authorLabel.text = author;
-
-  CGFloat fixedWidth = cell.bodyView.bounds.size.width - 30;
-    CGSize newSize = [cell.bodyView sizeThatFits:CGSizeMake(fixedWidth, MAXFLOAT)];
-   NSLog(@"width = %f, height = %f", newSize.width, newSize.height);
-    CGRect newFrame = cell.bodyView.frame;
-    newFrame.size = CGSizeMake(fmaxf(newSize.width, fixedWidth), newSize.height);
-    cell.bodyView.frame = newFrame;
 
 	NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"https://crafatar.com/avatars/%@?size=64&helm", author]];
 	NSURLRequest *request = [NSURLRequest requestWithURL:url];
@@ -93,23 +88,24 @@ static NSString *CellIdentifier = @"Cell";
 	return cell;
 }
 
-- (CGFloat) tableView: (UITableView * ) tableView heightForRowAtIndexPath: (NSIndexPath * ) indexPath {
-	PostObject *currentPost = [self.postsArray objectAtIndex: indexPath.row];
-	NSString *text = [currentPost text];
-	NSError *error;
-	NSAttributedString *formatted = [
-		[NSAttributedString alloc] initWithData: [text dataUsingEncoding:NSUTF8StringEncoding] options:@{
-			NSDocumentTypeDocumentAttribute:NSHTMLTextDocumentType
-		}
-		documentAttributes:nil error:&error
-	];
-	CGFloat height = [formatted boundingRectWithSize:CGSizeMake(self.topicTableView.frame.size.width - 10, CGFLOAT_MAX) options:(NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingUsesFontLeading) context: nil].size.height;
+- (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate {    
+  NSInteger currentOffset = scrollView.contentOffset.y;
+  NSInteger maximumOffset = scrollView.contentSize.height - scrollView.frame.size.height;
 
-	return height + 25;
+  if (maximumOffset - currentOffset <= -40) {
+    self.page += 1;
+    [self refreshTable];
+  }
+}
+
+- (BOOL)textView:(UITextView *)textView shouldInteractWithURL:(NSURL *)URL inRange:(NSRange)characterRange {
+  OvercastWebViewController *webView = [[OvercastWebViewController alloc] initWithURL:URL andDelegate:self];
+  [self.navigationController pushViewController:webView animated:YES];
+  return NO;
 }
 
 - (void)refreshTable {
-	NSString *apiCall = [NSString stringWithFormat: @"https://sunshine-api.com/forums/topics/%@", [self.topic topicId]];
+	NSString *apiCall = [NSString stringWithFormat:@"https://sunshine-api.com/forums/topics/%@?page=%d", [self.topic topicId], (int) self.page];
 
   if (self.page == 1) {
    self.postsArray = nil;
