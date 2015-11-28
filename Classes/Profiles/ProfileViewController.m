@@ -46,8 +46,9 @@
    message:@"Failed to load the Overcast website."
    preferredStyle:UIAlertControllerStyleAlert];
  
-  UIAlertAction* defaultAction = [UIAlertAction actionWithTitle:@"Ok" style:UIAlertActionStyleDefault
-     handler:^(UIAlertAction * action) {}];
+  UIAlertAction* defaultAction = [UIAlertAction actionWithTitle:@"Ok" 
+    style:UIAlertActionStyleDefault
+    handler:nil];
    
   [alert addAction:defaultAction];
   [self presentViewController:alert animated:YES completion:nil];
@@ -61,11 +62,12 @@
   if (statusCode == 404) {
     [self.profileView stringByEvaluatingJavaScriptFromString:@"document.open();document.close()"];
     UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"Player not Found"
-     message:@"This player does not exist. Try again."
-     preferredStyle:UIAlertControllerStyleAlert];
+      message:@"This player does not exist. Try again."
+      preferredStyle:UIAlertControllerStyleAlert];
    
-    UIAlertAction* defaultAction = [UIAlertAction actionWithTitle:@"Ok" style:UIAlertActionStyleDefault
-       handler:^(UIAlertAction * action) {}];
+    UIAlertAction* defaultAction = [UIAlertAction actionWithTitle:@"Ok" 
+      style:UIAlertActionStyleDefault
+      handler:nil];
      
     [alert addAction:defaultAction];
     [self presentViewController:alert animated:YES completion:nil];
