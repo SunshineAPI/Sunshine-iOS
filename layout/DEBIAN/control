@@ -2,7 +2,7 @@ Package: com.sunshine-api.sunshine-client
 Name: Sunshine
 Version: 0.1.0
 Architecture: iphoneos-arm
-Description: App for Overcast Network forums
+Description: iOS App for the Overcast Network forums based on the Sunshine Web API
 Maintainer: Jake0oo0 <jake0oo0dev@gmail.com>
 Author: Jake0oo0 <jake0oo0dev@gmail.com>
 Section: Applications
