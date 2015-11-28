@@ -1,6 +1,9 @@
 #import "ForumsViewController.h"
 #import "TopicViewController.h"
 #import "Topic.h"
+#import "AFNetworking/AFNetworking.h"
+#import "UIKit+AFNetworking/UIImageView+AFNetworking.h"
+
 
 @implementation ForumsViewController
 @synthesize topicsArray;
@@ -35,6 +38,7 @@
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+  [tableView deselectRowAtIndexPath:indexPath animated:YES];
   TopicObject *currentTopic = [self.topicsArray objectAtIndex:indexPath.row];
   TopicViewController *topicController = [TopicViewController alloc];
   topicController.topic = currentTopic;
@@ -63,51 +67,30 @@
 	NSString *title = [currentTopic title];
 	NSString *author = [currentTopic author];
 	cell.textLabel.text = title;
-	
 
-	NSString *identifier = [NSString stringWithFormat:@"Cell%@", author];
+	NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"https://crafatar.com/avatars/%@?size=64&helm", author]];
+	NSURLRequest *request = [NSURLRequest requestWithURL:url];
 
-	if ([self.cachedAvatars objectForKey:identifier] != nil) {
-		cell.imageView.image = [self.cachedAvatars valueForKey:identifier];
-	} else {
+	__weak UITableViewCell *weakCell = cell;
 
-		char const * s = [identifier  UTF8String];
-
-		dispatch_queue_t queue = dispatch_queue_create(s, 0);
-
-		dispatch_async(queue, ^{
-
-			NSString *crafatar = [NSString stringWithFormat:@"https://crafatar.com/avatars/%@?size=32&helm", author];
-
-			UIImage *img = nil;
-
-			NSData *imgData = [NSData dataWithContentsOfURL:[NSURL URLWithString:crafatar]];
-
-			img = [[UIImage alloc] initWithData:imgData];
-
-			dispatch_async(dispatch_get_main_queue(), ^{
-
-				if ([tableView indexPathForCell:cell].row == indexPath.row) {
-
-					[self.cachedAvatars setValue:img forKey:identifier];
-
-					cell.imageView.image = [self.cachedAvatars valueForKey:identifier];
-				}
-			});
-		});
-	}
+	[cell.imageView setImageWithURLRequest:request
+   	placeholderImage:nil
+   	success:^(NSURLRequest *request, NSHTTPURLResponse *response, UIImage *image) {
+      weakCell.imageView.image = image;
+      [weakCell setNeedsLayout];
+   } failure:nil];
 
 	return cell;
 }
 
 - (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate {    
-    NSInteger currentOffset = scrollView.contentOffset.y;
-    NSInteger maximumOffset = scrollView.contentSize.height - scrollView.frame.size.height;
+  NSInteger currentOffset = scrollView.contentOffset.y;
+  NSInteger maximumOffset = scrollView.contentSize.height - scrollView.frame.size.height;
 
-    if (maximumOffset - currentOffset <= -40) {
-    	self.page += 1;
-        [self refreshTable];
-    }
+  if (maximumOffset - currentOffset <= -40) {
+  	self.page += 1;
+     [self refreshTable];
+  }
 }
 
 -(void)refreshTable {
@@ -115,7 +98,7 @@
 		self.topicsArray = nil;
 		self.topicsArray = [[NSMutableArray alloc] init];
 	}
-	NSString *apiCall = [NSString stringWithFormat:@"https://agile-tor-8712.herokuapp.com/forums/new?page=%d", (int)self.page];
+	NSString *apiCall = [NSString stringWithFormat:@"https://sunshine-api.com/forums/new?page=%d", (int)self.page];
 	NSURLRequest *urlRequest = [NSURLRequest requestWithURL:[NSURL URLWithString:apiCall]];
 	NSURLResponse *response = nil;
 	NSError *error = nil;
@@ -123,8 +106,7 @@
 		returningResponse:&response
 		error:&error];
 
-
-	if (error == nil && data) {
+	if (!error && data) {
 		NSError *err = nil;
 		id object = [NSJSONSerialization
 			JSONObjectWithData:data
@@ -139,10 +121,9 @@
 				TopicObject *topic = [[TopicObject alloc] initJSON:eachTopic];
 				[self.topicsArray addObject:topic];
 			}
+
 			[self.topicsTableView reloadData];
 			[self.refreshControl endRefreshing];
-		} else {
-
 		}
 	}
 }

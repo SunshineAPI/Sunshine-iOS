@@ -7,7 +7,7 @@
 
 -(id)initJSON:(NSDictionary*)data {
   self = [super init];
-  if(self){
+  if (self) {
     self.topicId = [data objectForKey:@"id"];
     self.title = [data objectForKey:@"title"];
     self.author = [data objectForKey:@"author"];

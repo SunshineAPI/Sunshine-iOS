@@ -2,6 +2,8 @@
 #import "Post.h"
 #import "PostCell.h"
 #import "PostImageAttachment.h"
+#import "AFNetworking/AFNetworking.h"
+#import "UIKit+AFNetworking/UIImageView+AFNetworking.h"
 
 @implementation TopicViewController 
 @synthesize postsArray;
@@ -27,18 +29,18 @@
 	[self refreshTable];
 }
 
-- (NSInteger) tableView: (UITableView * ) tableView numberOfRowsInSection: (NSInteger) section {
+- (NSInteger)tableView: (UITableView * ) tableView numberOfRowsInSection: (NSInteger) section {
 	if (tableView == self.topicTableView) {
 		return ([self.postsArray count]);
 	}
 	return 0;
 }
 
-- (NSInteger) numberOfSectionsInTableView: (UITableView * ) tableView {
+- (NSInteger)numberOfSectionsInTableView: (UITableView * ) tableView {
 	return 1;
 }
 
-- (UITableViewCell * ) tableView: (UITableView * ) tableView cellForRowAtIndexPath: (NSIndexPath * ) indexPath {
+- (UITableViewCell * )tableView: (UITableView * ) tableView cellForRowAtIndexPath: (NSIndexPath * ) indexPath {
 	NSString * CellIdentifier = @"Cell";
 
 	PostCell * cell = [tableView dequeueReusableCellWithIdentifier: CellIdentifier];
@@ -71,46 +73,23 @@
 
 	cell.contentLabel.attributedText = formatted;
 	cell.authorLabel.text = author;
-	//cell.avatarImage.image = [UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:crafatar]]];
 
-	NSString * identifier = [NSString stringWithFormat: @"Cell%@", author];
+	NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"https://crafatar.com/avatars/%@?size=32&helm", author]];
+	NSURLRequest *request = [NSURLRequest requestWithURL:url];
 
-	if ([self.cachedAvatars objectForKey: identifier] != nil) {
-		cell.avatarImage.image = [self.cachedAvatars valueForKey: identifier];
-	} else {
+	__weak UITableViewCell *weakCell = cell;
 
-		char
-		const * s = [identifier UTF8String];
-
-		dispatch_queue_t queue = dispatch_queue_create(s, 0);
-
-		dispatch_async(queue, ^ {
-
-			NSString * crafatar = [NSString stringWithFormat: @"https://crafatar.com/avatars/%@?size=16&helm", author];
-
-			UIImage * img = nil;
-
-			NSData * imgData = [NSData dataWithContentsOfURL: [NSURL URLWithString: crafatar]];
-
-			img = [[UIImage alloc] initWithData: imgData];
-
-			dispatch_async(dispatch_get_main_queue(), ^ {
-
-				if ([tableView indexPathForCell: cell].row == indexPath.row) {
-
-					[self.cachedAvatars setValue: img forKey: identifier];
-
-					cell.avatarImage.image = [self.cachedAvatars valueForKey: identifier];
-				}
-			});
-		});
-	}
+	[cell.imageView setImageWithURLRequest:request
+   	placeholderImage:nil
+   	success:^(NSURLRequest *request, NSHTTPURLResponse *response, UIImage *image) {
+      weakCell.imageView.image = image;
+      [weakCell setNeedsLayout];
+   } failure:nil];
 
 	return (cell);
 }
 
 - (CGFloat) tableView: (UITableView * ) tableView heightForRowAtIndexPath: (NSIndexPath * ) indexPath {
-	//UIFont * font = [UIFont systemFontOfSize:17.0f];
 	PostObject * currentPost = [self.postsArray objectAtIndex: indexPath.row];
 	NSString * text = [currentPost text];
 	NSError * error;
@@ -130,7 +109,7 @@
 	self.postsArray = [
 		[NSMutableArray alloc] init
 	];
-	NSString * reqUrl = [NSString stringWithFormat: @"https://agile-tor-8712.herokuapp.com/forums/topics/%@", [self.topic topicId]];
+	NSString * reqUrl = [NSString stringWithFormat: @"https://sunshine-api.com/forums/topics/%@", [self.topic topicId]];
 	NSURLRequest * urlRequest = [NSURLRequest requestWithURL: [NSURL URLWithString: reqUrl]];
 	NSURLResponse * response = nil;
 	NSError * error = nil;
@@ -159,8 +138,6 @@
 				[self.postsArray addObject: post];
 			}
 			[self.topicTableView reloadData];
-		} else {
-
 		}
 	}
 }

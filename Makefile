@@ -8,7 +8,7 @@ include theos/makefiles/common.mk
 
 APPLICATION_NAME = Overcast
 Overcast_FILES = main.m $(wildcard Classes/**/*.m) $(wildcard Classes/*.m) $(wildcard Classes/*.mm)
-Overcast_FRAMEWORKS = UIKit CoreGraphics Foundation
+Overcast_FRAMEWORKS = UIKit CoreGraphics Foundation SystemConfiguration Security MobileCoreServices
 Overcast_PRIVATE_FRAMEWORKS = ChatKit
 Overcast_LDFLAGS = -all_load -ObjC
 Overcast_LDFLAGS += -Wl,-segalign,4000
