@@ -1,8 +1,8 @@
-#import "RootViewController.h"
+#import "ForumsViewController.h"
 #import "TopicViewController.h"
-#import "Topic.m"
+#import "Topic.h"
 
-@implementation RootViewController
+@implementation ForumsViewController
 @synthesize topicsArray;
 @synthesize topicsTableView;
 @synthesize refreshControl;
@@ -10,13 +10,13 @@
 @synthesize cachedAvatars;
 
 - (void)loadView {
-	self.view = [[[UIView alloc] initWithFrame:[[UIScreen mainScreen] applicationFrame]] autorelease];
+	self.view = [[UIView alloc] initWithFrame: [[UIScreen mainScreen] applicationFrame]];
 	self.view.backgroundColor = [UIColor whiteColor];
 }
 
 - (void)viewDidLoad {
 	[super viewDidLoad];
-	[self setTitle:@"What's New?"];
+	self.title = @"What's New?";
 
 	self.cachedAvatars = [[NSMutableDictionary alloc] init];
 	self.topicsTableView = [[UITableView alloc] initWithFrame:self.view.bounds style:UITableViewStylePlain];
@@ -24,9 +24,9 @@
 	self.topicsTableView.delegate = self;
 
 	self.refreshControl = [[UIRefreshControl alloc] init];
-    self.refreshControl.tintColor = [UIColor grayColor];
-    self.page = 1;
-    [self.refreshControl addTarget:self action:@selector(refreshTable) forControlEvents:UIControlEventValueChanged];
+  self.refreshControl.tintColor = [UIColor grayColor];
+  self.page = 1;
+  [self.refreshControl addTarget:self action:@selector(refreshTable) forControlEvents:UIControlEventValueChanged];
 
 	[self.view addSubview:self.topicsTableView];
 	[self.topicsTableView addSubview:self.refreshControl];
@@ -34,27 +34,23 @@
 	[self refreshTable];
 }
 
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
-{
-      TopicObject *currentTopic = [self.topicsArray objectAtIndex:indexPath.row];
-      TopicViewController *topicController = [TopicViewController alloc];
-      topicController.topic = currentTopic;
-      [self.navigationController pushViewController:topicController animated:YES];
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+  TopicObject *currentTopic = [self.topicsArray objectAtIndex:indexPath.row];
+  TopicViewController *topicController = [TopicViewController alloc];
+  topicController.topic = currentTopic;
+  [self.navigationController pushViewController:topicController animated:YES];
 }
 
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
-	if (tableView == self.topicsTableView){
-		return([self.topicsArray count]);
-	}
-	return 0;
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+	if (tableView != self.topicsTableView) return 0;
+	return [self.topicsArray count];
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
 	return 1;
 }
 
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
-{
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
 	NSString *CellIdentifier = @"Cell";
 
 	UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
@@ -101,7 +97,7 @@
 		});
 	}
 
-	return(cell);
+	return cell;
 }
 
 - (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate {    
@@ -115,11 +111,11 @@
 }
 
 -(void)refreshTable {
-	if (self.page == 1 or self.refreshControl.isRefreshing) {
+	if (self.page == 1 || self.refreshControl.isRefreshing) {
 		self.topicsArray = nil;
 		self.topicsArray = [[NSMutableArray alloc] init];
 	}
-	NSString *apiCall = [NSString stringWithFormat:@"https://agile-tor-8712.herokuapp.com/forums/new?page=%d", self.page];
+	NSString *apiCall = [NSString stringWithFormat:@"https://agile-tor-8712.herokuapp.com/forums/new?page=%d", (int)self.page];
 	NSURLRequest *urlRequest = [NSURLRequest requestWithURL:[NSURL URLWithString:apiCall]];
 	NSURLResponse *response = nil;
 	NSError *error = nil;
@@ -128,7 +124,7 @@
 		error:&error];
 
 
-	if (error == nil and data) {
+	if (error == nil && data) {
 		NSError *err = nil;
 		id object = [NSJSONSerialization
 			JSONObjectWithData:data

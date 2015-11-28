@@ -1,7 +1,7 @@
 #import "TopicViewController.h"
-#import "Post.m"
-#import "PostCell.m"
-#import "PostImageAttachment.m"
+#import "Post.h"
+#import "PostCell.h"
+#import "PostImageAttachment.h"
 
 @implementation TopicViewController 
 @synthesize postsArray;
@@ -9,7 +9,7 @@
 @synthesize cachedAvatars;
 
 - (void) viewDidLoad {
-	self.view = [[[UIView alloc] initWithFrame: [[UIScreen mainScreen] applicationFrame]] autorelease];
+	self.view = [[UIView alloc] initWithFrame: [[UIScreen mainScreen] applicationFrame]];
 	self.view.backgroundColor = [UIColor whiteColor];
 	NSString * title = [NSString stringWithFormat: @"%@", [self.topic title]];
 	[self setTitle: title];
@@ -126,13 +126,11 @@
 }
 
 - (void) refreshTable {
-	NSLog(@"Refreshing!");
 	self.postsArray = nil;
 	self.postsArray = [
 		[NSMutableArray alloc] init
 	];
 	NSString * reqUrl = [NSString stringWithFormat: @"https://agile-tor-8712.herokuapp.com/forums/topics/%@", [self.topic topicId]];
-	NSLog(@"%@", reqUrl);
 	NSURLRequest * urlRequest = [NSURLRequest requestWithURL: [NSURL URLWithString: reqUrl]];
 	NSURLResponse * response = nil;
 	NSError * error = nil;
@@ -142,8 +140,7 @@
 	];
 
 
-	if (error == nil and data) {
-		NSLog(@"Here yo");
+	if (error == nil && data) {
 		NSError * err = nil;
 		id object = [NSJSONSerialization
 			JSONObjectWithData: data
@@ -152,7 +149,6 @@
 		];
 
 		if ([object isKindOfClass: [NSDictionary class]]) {
-			NSLog(@"INDEED");
 			NSDictionary * results = object;
 			NSArray * dataArray = [results valueForKeyPath: @"data.posts"];
 

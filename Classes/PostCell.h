@@ -1,9 +1,9 @@
 #import <UIKit/UIKit.h>
 
 @interface PostCell : UITableViewCell {
-    UILabel *contentLabel;
-    UILabel *authorLabel;
-    UIImageView *avatarImage;
+  UILabel *contentLabel;
+  UILabel *authorLabel;
+  UIImageView *avatarImage;
 }
 
 @property (nonatomic, retain) UILabel *contentLabel;

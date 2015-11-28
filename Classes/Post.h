@@ -1,4 +1,5 @@
 #import <Foundation/Foundation.h>
+
 @interface PostObject : NSObject
 
 -(id)initJSON:(NSDictionary*)data;
