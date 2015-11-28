@@ -1,12 +1,8 @@
 #import <UIKit/UIKit.h>
 
-@interface PostCell : UITableViewCell {
-  UILabel *contentLabel;
-  UILabel *authorLabel;
-  UIImageView *avatarImage;
-}
-
-@property (nonatomic, retain) UILabel *contentLabel;
-@property (nonatomic, retain) UILabel *authorLabel;
-@property (nonatomic, retain) UIImageView *avatarImage;
+@interface PostCell : UITableViewCell
+  @property (strong, nonatomic) IBOutlet UILabel *authorLabel;
+  @property (strong, nonatomic) IBOutlet UITextView *bodyView;
+  @property (strong, nonatomic) IBOutlet UIImageView *avatarView;
+  @property (nonatomic, assign) BOOL didSetupConstraints;
 @end

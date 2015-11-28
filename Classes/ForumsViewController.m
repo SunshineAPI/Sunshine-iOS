@@ -4,20 +4,13 @@
 #import "AFNetworking/AFNetworking.h"
 #import "UIKit+AFNetworking/UIImageView+AFNetworking.h"
 
-
 @implementation ForumsViewController
-@synthesize topicsArray;
-@synthesize topicsTableView;
-@synthesize refreshControl;
-@synthesize page;
-@synthesize cachedAvatars;
-
-- (void)loadView {
-	self.view = [[UIView alloc] initWithFrame: [[UIScreen mainScreen] applicationFrame]];
-	self.view.backgroundColor = [UIColor whiteColor];
-}
+@synthesize topicsArray, topicsTableView, refreshControl, page, cachedAvatars;
 
 - (void)viewDidLoad {
+  self.view = [[UIView alloc] initWithFrame: [[UIScreen mainScreen] applicationFrame]];
+  self.view.backgroundColor = [UIColor whiteColor];
+
 	[super viewDidLoad];
 	self.title = @"What's New?";
 
@@ -89,43 +82,36 @@
 
   if (maximumOffset - currentOffset <= -40) {
   	self.page += 1;
-     [self refreshTable];
+    [self refreshTable];
   }
 }
 
 -(void)refreshTable {
-	if (self.page == 1 || self.refreshControl.isRefreshing) {
-		self.topicsArray = nil;
-		self.topicsArray = [[NSMutableArray alloc] init];
-	}
-	NSString *apiCall = [NSString stringWithFormat:@"https://sunshine-api.com/forums/new?page=%d", (int)self.page];
-	NSURLRequest *urlRequest = [NSURLRequest requestWithURL:[NSURL URLWithString:apiCall]];
-	NSURLResponse *response = nil;
-	NSError *error = nil;
-	NSData *data = [NSURLConnection sendSynchronousRequest:urlRequest
-		returningResponse:&response
-		error:&error];
+  NSString *apiCall = [NSString stringWithFormat:@"https://sunshine-api.com/forums/new?page=%d", (int) self.page];
 
-	if (!error && data) {
-		NSError *err = nil;
-		id object = [NSJSONSerialization
-			JSONObjectWithData:data
-			options:0
-			error:&err];
+  if (self.page == 1 || self.refreshControl.isRefreshing) {
+   self.topicsArray = nil;
+   self.topicsArray = [[NSMutableArray alloc] init];
+  }
 
-		if ([object isKindOfClass:[NSDictionary class]]) {
-			NSDictionary *results = object;
-			NSArray *dataArray = [results objectForKey:@"data"];
+  AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
+  manager.requestSerializer = [AFJSONRequestSerializer serializer];
+  [manager GET:apiCall
+    parameters:nil
+    success:^(NSURLSessionDataTask *task, id results) {
+      NSArray *dataArray = [results objectForKey:@"data"];
 
-			for (NSDictionary *eachTopic in dataArray) {
-				TopicObject *topic = [[TopicObject alloc] initJSON:eachTopic];
-				[self.topicsArray addObject:topic];
-			}
+      for (NSDictionary *eachTopic in dataArray) {
+        TopicObject *topic = [[TopicObject alloc] initJSON:eachTopic];
+        [self.topicsArray addObject:topic];
+      }
 
-			[self.topicsTableView reloadData];
-			[self.refreshControl endRefreshing];
-		}
-	}
+      dispatch_async(dispatch_get_main_queue(), ^{
+        [self.topicsTableView reloadData];
+        [self.refreshControl endRefreshing];
+      });
+    }
+    failure:nil];
 }
 
 @end

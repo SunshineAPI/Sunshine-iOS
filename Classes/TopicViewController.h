@@ -7,5 +7,5 @@
 @property (nonatomic, retain) UITableView *topicTableView;
 @property (nonatomic, retain) NSMutableArray *postsArray;
 @property (nonatomic, retain) TopicObject *topic;
-@property (nonatomic, retain) NSMutableDictionary *cachedAvatars;
+@property (nonatomic) NSInteger page;
 @end

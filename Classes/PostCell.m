@@ -1,52 +1,71 @@
 #import "PostCell.h"
+#import "PureLayout/PureLayout.h"
+
+#define kLabelHorizontalInsets 15.0f
+#define kLabelVerticalInsets 10.0f
 
 @implementation PostCell
-@synthesize contentLabel, avatarImage, authorLabel;
 
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier {
-  if (self = [super initWithStyle:style reuseIdentifier:reuseIdentifier]) {
-    contentLabel = [[UILabel alloc] init];
-    authorLabel = [[UILabel alloc] init];
-    authorLabel.font = [UIFont systemFontOfSize:18];
-    contentLabel.textAlignment = NSTextAlignmentCenter;
+  self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
+  if (self) {
+      
+    self.authorLabel = [UILabel newAutoLayoutView];
+    [self.authorLabel setLineBreakMode:NSLineBreakByTruncatingTail];
+    [self.authorLabel setNumberOfLines:1];
 
-    contentLabel.font = [UIFont systemFontOfSize:17];
-    contentLabel.numberOfLines = 0;
-    contentLabel.lineBreakMode = NSLineBreakByWordWrapping;
+    self.avatarView = [UIImageView newAutoLayoutView];
+    self.avatarView.frame = CGRectMake(0, 0, 64, 64);
 
-    avatarImage = [[UIImageView alloc]init];
+    self.bodyView = [UITextView newAutoLayoutView];
+    self.bodyView.textContainer.lineFragmentPadding = 0;
+    self.bodyView.textContainerInset = UIEdgeInsetsZero;
+    // [self.bodyView sizeToFit];
 
-    [self.contentView addSubview:contentLabel];
-    [self.contentView addSubview:authorLabel];
-    [self.contentView addSubview:avatarImage];
 
+    [self.contentView addSubview:self.authorLabel];
+    [self.contentView addSubview:self.avatarView];
+    [self.contentView addSubview:self.bodyView];
+      
   }
-
+  
   return self;
-
 }
 
-- (void)layoutSubviews {
-  [super layoutSubviews];
+- (void)updateConstraints {
+  if (!self.didSetupConstraints) {
 
-  CGRect contentRect = self.contentView.bounds;
+    [NSLayoutConstraint autoSetPriority:UILayoutPriorityRequired forConstraints:^{
+        [self.avatarView autoSetContentCompressionResistancePriorityForAxis:ALAxisVertical];
+    }];
 
-  CGFloat boundsX = contentRect.origin.x;
-  float width = contentRect.size.width;
-  float height = contentRect.size.height; 
+    [self.avatarView autoPinEdgeToSuperviewEdge:ALEdgeTop withInset:kLabelVerticalInsets];
+    [self.avatarView autoPinEdgeToSuperviewEdge:ALEdgeLeading withInset:kLabelHorizontalInsets];
+    // [self.avatarView autoPinEdgeToSuperviewEdge:ALEdgeTrailing withInset:kLabelHorizontalInsets];
 
-  CGRect frame;
+    // setup author
+    // 
+    [self.authorLabel autoPinEdge:ALEdgeLeading toEdge:ALEdgeTrailing ofView:self.avatarView withOffset:kLabelHorizontalInsets];
+    [NSLayoutConstraint autoSetPriority:UILayoutPriorityRequired forConstraints:^{
+        [self.authorLabel autoSetContentCompressionResistancePriorityForAxis:ALAxisVertical];
+    }];
 
-  frame= CGRectMake(boundsX+10, 5, 16, 16);
+    [self.authorLabel autoPinEdgeToSuperviewEdge:ALEdgeTop withInset:kLabelVerticalInsets];
+    // [self.authorLabel autoPinEdgeToSuperviewEdge:ALEdgeLeading withInset:kLabelHorizontalInsets];
+    // [self.authorLabel autoPinEdgeToSuperviewEdge:ALEdgeTrailing withInset:kLabelHorizontalInsets];
 
-  avatarImage.frame = frame;
-
-  frame= CGRectMake(boundsX+38, 5, width - 10, 16);
-
-  authorLabel.frame = frame;
-
-  frame= CGRectMake(boundsX + 10, 20, width - 10, height + 20);
-
-  contentLabel.frame = frame;
+    [self.bodyView autoPinEdge:ALEdgeTop toEdge:ALEdgeBottom ofView:self.avatarView withOffset:kLabelVerticalInsets];
+    [NSLayoutConstraint autoSetPriority:UILayoutPriorityRequired forConstraints:^{
+        [self.bodyView autoSetContentCompressionResistancePriorityForAxis:ALAxisVertical];
+    }];
+    [self.bodyView autoPinEdgeToSuperviewEdge:ALEdgeBottom withInset:kLabelVerticalInsets];
+    [self.bodyView autoPinEdgeToSuperviewEdge:ALEdgeLeading withInset:kLabelHorizontalInsets];
+    [self.bodyView autoPinEdgeToSuperviewEdge:ALEdgeTrailing withInset:kLabelHorizontalInsets];
+    
+    self.didSetupConstraints = YES;
+  }
+    
+  [super updateConstraints];
 }
+
 @end
