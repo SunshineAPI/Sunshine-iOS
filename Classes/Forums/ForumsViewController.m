@@ -27,6 +27,7 @@
 	self.topicsTableView = [[UITableView alloc] initWithFrame:self.view.bounds style:UITableViewStylePlain];
 	self.topicsTableView.dataSource = self;
 	self.topicsTableView.delegate = self;
+  self.topicsTableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
 
 	self.refreshControl = [[UIRefreshControl alloc] init];
   self.refreshControl.tintColor = [UIColor lightGrayColor];

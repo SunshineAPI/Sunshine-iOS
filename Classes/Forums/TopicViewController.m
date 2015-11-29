@@ -5,6 +5,7 @@
 #import "../AFNetworking/AFNetworking.h"
 #import "../UIKit+AFNetworking/UIImageView+AFNetworking.h"
 #import "../OvercastWebViewController.h"
+#import "../LinkHelper.h"
 
 static NSString *CellIdentifier = @"Cell";
 
@@ -23,11 +24,11 @@ static NSString *CellIdentifier = @"Cell";
   self.topicTableView.estimatedRowHeight = 50;
   self.topicTableView.rowHeight = UITableViewAutomaticDimension;
   self.topicTableView.allowsSelection = NO;
+  self.topicTableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
   [self.topicTableView registerClass:[PostCell class] forCellReuseIdentifier:CellIdentifier];
 
   self.refreshControl = [[UIRefreshControl alloc] init];
   self.refreshControl.tintColor = [UIColor lightGrayColor];
-  self.page = 1;
   [self.refreshControl addTarget:self action:@selector(refreshTable) forControlEvents:UIControlEventValueChanged];
 
 	[self.view addSubview:self.topicTableView];
@@ -37,16 +38,16 @@ static NSString *CellIdentifier = @"Cell";
 	[self refreshTable];
 }
 
-- (NSInteger)tableView:(UITableView * )tableView numberOfRowsInSection: (NSInteger) section {
+- (NSInteger)tableView:(UITableView*)tableView numberOfRowsInSection:(NSInteger)section {
 	if (tableView != self.topicTableView) return 0;
 	return [self.postsArray count];
 }
 
-- (NSInteger)numberOfSectionsInTableView:(UITableView * )tableView {
+- (NSInteger)numberOfSectionsInTableView:(UITableView*)tableView {
 	return 1;
 }
 
-- (UITableViewCell * )tableView: (UITableView * ) tableView cellForRowAtIndexPath: (NSIndexPath * ) indexPath {
+- (UITableViewCell*)tableView:(UITableView*)tableView cellForRowAtIndexPath:(NSIndexPath*)indexPath {
 	PostCell *cell = [self.topicTableView dequeueReusableCellWithIdentifier:CellIdentifier];
 
 	PostObject *currentPost = [self.postsArray objectAtIndex: indexPath.row];
@@ -59,7 +60,7 @@ static NSString *CellIdentifier = @"Cell";
 		}
 		documentAttributes:nil error:&error];
 
-	[formatted enumerateAttribute: NSAttachmentAttributeName inRange: NSMakeRange(0, formatted.length) options: 0 usingBlock: ^ (id value, NSRange range, BOOL * stop) {
+	[formatted enumerateAttribute:NSAttachmentAttributeName inRange:NSMakeRange(0, formatted.length) options:0 usingBlock:^(id value, NSRange range, BOOL * stop) {
 		if (value) {
 			NSTextAttachment *attachment = (NSTextAttachment*) value;
 			PostImageAttachment* postAttach = [PostImageAttachment new];
@@ -105,8 +106,9 @@ static NSString *CellIdentifier = @"Cell";
 }
 
 - (BOOL)textView:(UITextView *)textView shouldInteractWithURL:(NSURL *)URL inRange:(NSRange)characterRange {
-  OvercastWebViewController *webView = [[OvercastWebViewController alloc] initWithURL:URL andDelegate:self];
-  [self.navigationController pushViewController:webView animated:YES];
+  // OvercastWebViewController *webView = [[OvercastWebViewController alloc] initWithURL:URL andDelegate:self];
+  // [self.navigationController pushViewController:webView animated:YES];
+  [LinkHelper openURL:URL];
   return NO;
 }
 
